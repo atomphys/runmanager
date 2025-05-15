@@ -37,7 +37,8 @@ import pprint
 import traceback
 import signal
 from pathlib import Path
-
+### added by Simon
+from distutils.dir_util import copy_tree
 splash.update_text('importing matplotlib')
 # Evaluation of globals happens in a thread with the pylab module imported.
 # Although we don't care about plotting, importing pylab makes Qt calls. We
@@ -1816,8 +1817,23 @@ class RunManager(object):
             except Exception as e:
                 raise Exception('Error parsing globals:\n%s\nCompilation aborted.' % str(e))
             logger.info('Making h5 files')
+            # Start Added by Simon 22.1.21 edited by Tilman 11.3.21
+            try:
+                for k in sequenceglobals.keys():
+                    if 'expdescription' in sequenceglobals[k].keys():
+                        addname=str(sequenceglobals[k]['expdescription'][0].replace('\'',''))
+                output_folder = output_folder+'_'+addname
+            except:
+                self.output_box.output('No custom name for shot_output_folder!!!! \n', red=True)
+            else:
+                self.output_box.output('Added \'' +addname+'\' to shot_output_folder\n')
+            # End Added by Simon 22.1.21   
             labscript_file, run_files = self.make_h5_files(
                 labscript_file, output_folder, sequenceglobals, shots, shuffle)
+            ### Start: added by Simon 4.2.21
+            # copy the pythonlib folder to output_folder
+            copy_tree('C:\\Users\\BEC_control\\labscript-suite\\userlib\\pythonlib', os.path.join(output_folder, 'pythonlib'))
+            ### End: added by Simon 4.2.21
             self.ui.pushButton_abort.setEnabled(True)
             self.compile_queue.put([labscript_file, run_files, send_to_BLACS, BLACS_host, send_to_runviewer])
         except Exception as e:

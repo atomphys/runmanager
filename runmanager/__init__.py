@@ -330,10 +330,14 @@ def delete_global(filename, groupname, globalname):
 
 
 def guess_expansion_type(value):
-    if isinstance(value, np.ndarray) or isinstance(value, list):
-        return u'outer'
-    else:
-        return u''
+# ========================= Tilman 4.5.21 =====================================
+#     if isinstance(value, np.ndarray) or isinstance(value, list):
+#         return u'outer'
+#     else:
+#         return u''
+# =============================================================================
+#This causes massive trouble for complicated scans dont't even try. Therfore we replaced it with:
+    return u''
 
 
 def iterator_to_tuple(iterator, max_length=1000000):
@@ -672,7 +676,8 @@ def new_sequence_details(script_path, config=None, increment_sequence_index=True
         config = LabConfig()
     script_basename = os.path.splitext(os.path.basename(script_path))[0]
     shot_storage = config.get('DEFAULT', 'experiment_shot_storage')
-    shot_basedir = os.path.join(shot_storage, script_basename)
+    # shot_basedir = os.path.join(shot_storage, script_basename)
+    shot_basedir = shot_storage # changed by Simon (2020): like old storage system
     now = datetime.datetime.now()
     sequence_timestamp = now.strftime('%Y%m%dT%H%M%S')
 
@@ -696,10 +701,15 @@ def new_sequence_details(script_path, config=None, increment_sequence_index=True
 
     # Format the output directory according to the current timestamp, sequence index and
     # sequence_timestamp, if present in the format string:
-    subdir = now.strftime(subdir_format).format(
-        sequence_index=sequence_index, sequence_timestamp=sequence_timestamp
-    )
+     # Start Change Simon (2020) This was done, so the config file can contain {script_basename} in the output_folder_format
+    subdir = now.strftime(subdir_format).format( 
+        sequence_index=sequence_index, sequence_timestamp=sequence_timestamp,script_basename=script_basename)
     shot_output_dir = os.path.join(shot_basedir, subdir)
+    # End change Simon
+    # subdir = now.strftime(subdir_format).format(
+    #     sequence_index=sequence_index, sequence_timestamp=sequence_timestamp
+    # )
+    # shot_output_dir = os.path.join(shot_basedir, subdir)
 
     # Compute the shot filename prefix according to labconfig settings:
     try:
