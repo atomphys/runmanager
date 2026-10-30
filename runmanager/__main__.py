@@ -1832,7 +1832,7 @@ class RunManager(object):
                 labscript_file, output_folder, sequenceglobals, shots, shuffle)
             ### Start: added by Simon 4.2.21
             # copy the pythonlib folder to output_folder
-            copy_tree('C:\\Users\\BEC_control\\labscript-suite\\userlib\\pythonlib', os.path.join(output_folder, 'pythonlib'))
+            copy_tree('C:\\Users\\BEC_Control_2\\labscript-suite\\userlib\\pythonlib', os.path.join(output_folder, 'pythonlib'))
             ### End: added by Simon 4.2.21
             self.ui.pushButton_abort.setEnabled(True)
             self.compile_queue.put([labscript_file, run_files, send_to_BLACS, BLACS_host, send_to_runviewer])
